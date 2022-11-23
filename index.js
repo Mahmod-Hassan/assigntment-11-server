@@ -41,6 +41,11 @@ async function run() {
             const result = await reviewsCollection.insertOne(review);
             res.send(result);
         })
+        app.get('/reviews', async (req, res) => {
+            const query = {};
+            const reviews = await reviewsCollection.find(query).toArray();
+            res.send(reviews);
+        })
     }
     finally {
 
