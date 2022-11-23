@@ -19,6 +19,11 @@ async function run() {
         const serviceCollection = client.db('servicesReviews').collection('services');
         const reviewsCollection = client.db('servicesReviews').collection('reviews');
 
+        app.post('/services', async (req, res) => {
+            const service = req.body;
+            const result = await serviceCollection.insertOne(service);
+            res.send(result);
+        })
         app.get('/services', async (req, res) => {
             const query = {};
             if (req.query.limit === 'limit') {
@@ -46,7 +51,21 @@ async function run() {
             const reviews = await reviewsCollection.find(query).toArray();
             res.send(reviews);
         })
+        app.delete('/my-reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await reviewsCollection.deleteOne(query);
+            res.send(result);
+        })
+        app.get('/my-reviews', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const results = await reviewsCollection.find(query).toArray();
+            res.send(results);
+        })
+
     }
+
     finally {
 
     }
