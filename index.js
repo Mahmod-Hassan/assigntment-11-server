@@ -64,12 +64,12 @@ async function run() {
         })
         app.get('/services', async (req, res) => {
             const query = {};
-            const services = await serviceCollection.find(query).toArray();
+            const services = await serviceCollection.find(query).sort({ date: -1 }).toArray();
             res.send(services)
         })
         app.get('/service-limit', async (req, res) => {
             const query = {};
-            const services = await serviceCollection.find(query).limit(3).toArray();
+            const services = await serviceCollection.find(query).sort({ date: -1 }).limit(3).toArray();
             res.send(services);
         })
         app.get('/services/:id', async (req, res) => {
@@ -90,19 +90,20 @@ async function run() {
         })
         app.delete('/delete-my-reviews/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await reviewsCollection.deleteOne(query);
-            res.send(result);
+            const query1 = { id: id };
+            const result1 = await reviewsCollection.deleteOne(query1);
+            const query2 = { _id: ObjectId(id) };
+            const result2 = await serviceCollection.deleteOne(query2);
         })
         app.get('/my-reviews', verifyJWT, async (req, res) => {
             const email = req.query.email;
-            console.log(email);
             const query = { email: email };
             const results = await reviewsCollection.find(query).toArray();
             res.send(results);
         })
         app.get('/edit-review/:id', async (req, res) => {
             const id = req.params.id;
+            console.log(id);
             const query = { _id: ObjectId(id) };
             const result = await reviewsCollection.findOne(query);
             res.send(result);
